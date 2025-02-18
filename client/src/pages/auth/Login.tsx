@@ -1,20 +1,44 @@
 import { useState } from "react";
-import { useLocation } from "wouter";
 import { Activity } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/lib/auth";
 
 export default function Login() {
-  const [, setLocation] = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const { signIn, signUp } = useAuth();
+  const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent, mode: "signin" | "signup") => {
     e.preventDefault();
-    // TODO: Implement authentication
-    setLocation("/");
+    setIsLoading(true);
+
+    try {
+      if (mode === "signin") {
+        await signIn(email, password);
+      } else {
+        await signUp(email, password);
+      }
+      toast({
+        title: mode === "signin" ? "Welcome back!" : "Account created",
+        description: mode === "signin" 
+          ? "You've been successfully logged in"
+          : "Your account has been created and you're now logged in",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Authentication error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -28,7 +52,7 @@ export default function Login() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={(e) => handleSubmit(e, "signin")} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -53,17 +77,25 @@ export default function Login() {
             />
           </div>
 
-          <Button type="submit" className="w-full">
-            Sign In
-          </Button>
+          <div className="space-y-2">
+            <Button 
+              type="submit" 
+              className="w-full"
+              disabled={isLoading}
+            >
+              {isLoading ? "Loading..." : "Sign In"}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              disabled={isLoading}
+              onClick={(e) => handleSubmit(e, "signup")}
+            >
+              Create Account
+            </Button>
+          </div>
         </form>
-
-        <div className="text-center text-sm">
-          <span className="text-muted-foreground">Don't have an account? </span>
-          <Button variant="link" onClick={() => setLocation("/register")}>
-            Sign up
-          </Button>
-        </div>
       </Card>
     </div>
   );
