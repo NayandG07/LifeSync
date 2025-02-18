@@ -56,7 +56,7 @@
     @apply font-sans antialiased bg-background text-foreground relative min-h-screen;
   }
 
-  /* Gradient background */
+  /* Enhanced gradient background */
   body::before {
     content: '';
     position: fixed;
@@ -64,31 +64,43 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: radial-gradient(
-      circle at top left,
-      hsl(var(--background)) 0%,
-      transparent 70%
-    ),
-    radial-gradient(
-      circle at bottom right,
-      hsl(var(--primary) / 0.1) 0%,
-      transparent 70%
-    );
+    background: 
+      radial-gradient(
+        circle at top left,
+        hsl(var(--background)) 0%,
+        transparent 70%
+      ),
+      radial-gradient(
+        circle at bottom right,
+        hsl(var(--primary) / 0.1) 0%,
+        transparent 70%
+      ),
+      radial-gradient(
+        circle at center,
+        hsl(var(--background)) 0%,
+        transparent 100%
+      );
     pointer-events: none;
     z-index: -1;
   }
 
-  /* Improved dark mode gradient */
+  /* Enhanced dark mode gradient */
   .dark body::before {
-    background: radial-gradient(
-      circle at top left,
-      hsl(var(--background)) 0%,
-      transparent 70%
-    ),
-    radial-gradient(
-      circle at bottom right,
-      hsl(var(--primary) / 0.2) 0%,
-      transparent 70%
-    );
+    background: 
+      radial-gradient(
+        circle at top left,
+        hsl(var(--background)) 0%,
+        transparent 70%
+      ),
+      radial-gradient(
+        circle at bottom right,
+        hsl(var(--primary) / 0.2) 0%,
+        transparent 70%
+      ),
+      radial-gradient(
+        circle at center,
+        hsl(var(--primary) / 0.05) 0%,
+        transparent 100%
+      );
   }
 }

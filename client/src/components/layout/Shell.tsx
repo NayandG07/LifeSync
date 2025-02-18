@@ -1,10 +1,14 @@
 import { Link, useLocation } from "wouter";
-import { useState } from "react";
-import { Layout, Home, MessageSquare, Activity, Menu } from "lucide-react";
+import { Activity, Home, MessageSquare, Menu, UserCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const navItems = [
   { icon: Home, label: "Dashboard", href: "/" },
@@ -42,37 +46,55 @@ function Sidebar({ className = "" }: { className?: string }) {
 function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 max-w-screen-2xl items-center">
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="md:hidden">
-              <Menu className="h-6 w-6" />
-              <span className="sr-only">Toggle menu</span>
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="p-0 w-64">
-            <Sidebar />
-          </SheetContent>
-        </Sheet>
-
+      <div className="container flex h-14 max-w-screen-2xl items-center justify-between">
         <div className="flex items-center gap-2">
-          <Layout className="h-6 w-6 text-primary" />
-          <span className="font-semibold">LifeSync Health</span>
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="md:hidden">
+                <Menu className="h-6 w-6" />
+                <span className="sr-only">Toggle menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="p-0 w-64">
+              <Sidebar />
+            </SheetContent>
+          </Sheet>
+
+          <Link href="/">
+            <div className="flex items-center gap-2">
+              <Activity className="h-6 w-6 text-primary" />
+              <span className="font-semibold">LifeSync</span>
+            </div>
+          </Link>
+
+          <nav className="hidden md:flex items-center gap-2 ml-6">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link key={item.href} href={item.href}>
+                  <Button variant="ghost" size="sm">
+                    <Icon className="mr-2 h-4 w-4" />
+                    {item.label}
+                  </Button>
+                </Link>
+              );
+            })}
+          </nav>
         </div>
 
-        <div className="hidden md:flex items-center gap-2 ml-6">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            return (
-              <Link key={item.href} href={item.href}>
-                <Button variant="ghost" size="sm">
-                  <Icon className="mr-2 h-4 w-4" />
-                  {item.label}
-                </Button>
-              </Link>
-            );
-          })}
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon">
+              <UserCircle className="h-6 w-6" />
+              <span className="sr-only">Open profile menu</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem>Profile</DropdownMenuItem>
+            <DropdownMenuItem>Settings</DropdownMenuItem>
+            <DropdownMenuItem>Sign out</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   );
@@ -82,7 +104,6 @@ export default function Shell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Navbar />
-
       <main className="flex-1">
         <div className="container max-w-screen-2xl mx-auto py-6 px-4 md:px-6">
           {children}
