@@ -34,12 +34,18 @@ export const healthMetrics = pgTable("health_metrics", {
   timestamp: timestamp("timestamp").notNull().defaultNow(),
 });
 
+// Create insert schemas
 export const insertUserSchema = createInsertSchema(users);
 export const insertMoodSchema = createInsertSchema(moods);
 export const insertSymptomSchema = createInsertSchema(symptoms);
 export const insertHealthMetricSchema = createInsertSchema(healthMetrics);
 
+// Export types
 export type User = typeof users.$inferSelect;
+export type InsertUser = typeof users.$inferInsert;
 export type Mood = typeof moods.$inferSelect;
+export type InsertMood = typeof moods.$inferInsert;
 export type Symptom = typeof symptoms.$inferSelect;
+export type InsertSymptom = typeof symptoms.$inferInsert;
 export type HealthMetric = typeof healthMetrics.$inferSelect;
+export type InsertHealthMetric = typeof healthMetrics.$inferInsert;
