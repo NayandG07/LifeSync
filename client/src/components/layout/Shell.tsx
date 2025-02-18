@@ -16,24 +16,27 @@ function Sidebar({ className = "" }: { className?: string }) {
   const [location] = useLocation();
 
   return (
-    <Card className={`p-4 h-full rounded-none border-r ${className}`}>
+    <Card className={`p-4 h-full rounded-none border-r bg-card/80 backdrop-blur-sm ${className}`}>
       <div className="flex items-center gap-2 mb-6">
-        <Layout className="h-6 w-6" />
+        <Layout className="h-6 w-6 text-primary" />
         <h1 className="font-semibold">LifeSync Health</h1>
       </div>
       <ScrollArea className="h-[calc(100vh-8rem)]">
         <div className="space-y-2">
-          {navItems.map((item) => (
-            <Link key={item.href} href={item.href}>
-              <Button
-                variant={location === item.href ? "secondary" : "ghost"}
-                className="w-full justify-start"
-              >
-                <item.icon className="mr-2 h-4 w-4" />
-                {item.label}
-              </Button>
-            </Link>
-          ))}
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link key={item.href} href={item.href}>
+                <Button
+                  variant={location === item.href ? "secondary" : "ghost"}
+                  className="w-full justify-start"
+                >
+                  <Icon className="mr-2 h-4 w-4" />
+                  {item.label}
+                </Button>
+              </Link>
+            );
+          })}
         </div>
       </ScrollArea>
     </Card>
@@ -48,14 +51,14 @@ export default function Shell({ children }: { children: React.ReactNode }) {
 
       {/* Mobile Header with Sheet */}
       <Sheet>
-        <div className="md:hidden flex items-center border-b p-4">
+        <div className="md:hidden flex items-center border-b p-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
           <SheetTrigger asChild>
             <Button variant="ghost" size="icon" className="mr-2">
               <Menu className="h-6 w-6" />
             </Button>
           </SheetTrigger>
           <div className="flex items-center gap-2">
-            <Layout className="h-6 w-6" />
+            <Layout className="h-6 w-6 text-primary" />
             <h1 className="font-semibold">LifeSync Health</h1>
           </div>
         </div>
