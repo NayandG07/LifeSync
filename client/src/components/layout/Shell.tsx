@@ -1,10 +1,10 @@
 import { Link, useLocation } from "wouter";
-import { useEffect } from "react";
-import { Layout, Home, MessageSquare, Activity } from "lucide-react";
+import { useState } from "react";
+import { Layout, Home, MessageSquare, Activity, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const navItems = [
   { icon: Home, label: "Dashboard", href: "/" },
@@ -12,34 +12,62 @@ const navItems = [
   { icon: Activity, label: "Symptoms", href: "/symptoms" },
 ];
 
-export default function Shell({ children }: { children: React.ReactNode }) {
+function Sidebar({ className = "" }: { className?: string }) {
   const [location] = useLocation();
 
   return (
-    <div className="flex h-screen bg-background">
-      <Card className="w-64 p-4 rounded-none border-r">
-        <div className="flex items-center gap-2 mb-6">
-          <Layout className="h-6 w-6" />
-          <h1 className="font-semibold">LifeSync Health</h1>
+    <Card className={`p-4 h-full rounded-none border-r ${className}`}>
+      <div className="flex items-center gap-2 mb-6">
+        <Layout className="h-6 w-6" />
+        <h1 className="font-semibold">LifeSync Health</h1>
+      </div>
+      <ScrollArea className="h-[calc(100vh-8rem)]">
+        <div className="space-y-2">
+          {navItems.map((item) => (
+            <Link key={item.href} href={item.href}>
+              <Button
+                variant={location === item.href ? "secondary" : "ghost"}
+                className="w-full justify-start"
+              >
+                <item.icon className="mr-2 h-4 w-4" />
+                {item.label}
+              </Button>
+            </Link>
+          ))}
         </div>
-        <ScrollArea className="h-[calc(100vh-8rem)]">
-          <div className="space-y-2">
-            {navItems.map((item) => (
-              <Link key={item.href} href={item.href}>
-                <Button
-                  variant={location === item.href ? "secondary" : "ghost"}
-                  className="w-full justify-start"
-                >
-                  <item.icon className="mr-2 h-4 w-4" />
-                  {item.label}
-                </Button>
-              </Link>
-            ))}
+      </ScrollArea>
+    </Card>
+  );
+}
+
+export default function Shell({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex h-screen bg-background">
+      {/* Desktop Sidebar */}
+      <Sidebar className="hidden md:block w-64" />
+
+      {/* Mobile Header with Sheet */}
+      <Sheet>
+        <div className="md:hidden flex items-center border-b p-4">
+          <SheetTrigger asChild>
+            <Button variant="ghost" size="icon" className="mr-2">
+              <Menu className="h-6 w-6" />
+            </Button>
+          </SheetTrigger>
+          <div className="flex items-center gap-2">
+            <Layout className="h-6 w-6" />
+            <h1 className="font-semibold">LifeSync Health</h1>
           </div>
-        </ScrollArea>
-      </Card>
-      <main className="flex-1 p-6 overflow-auto">
-        <div className="max-w-6xl mx-auto">{children}</div>
+        </div>
+        <SheetContent side="left" className="p-0 w-64">
+          <Sidebar />
+        </SheetContent>
+      </Sheet>
+
+      <main className="flex-1 p-4 md:p-6 overflow-auto pt-0 md:pt-6">
+        <div className="max-w-6xl mx-auto">
+          {children}
+        </div>
       </main>
     </div>
   );
