@@ -45,13 +45,13 @@ function Sidebar({ className = "" }: { className?: string }) {
 
 export default function Shell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen bg-background overflow-hidden">
       {/* Desktop Sidebar */}
       <Sidebar className="hidden md:block w-64" />
 
       {/* Mobile Header with Sheet */}
       <Sheet>
-        <div className="md:hidden flex items-center border-b p-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="md:hidden flex items-center border-b p-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-10">
           <SheetTrigger asChild>
             <Button variant="ghost" size="icon" className="mr-2">
               <Menu className="h-6 w-6" />
@@ -67,8 +67,8 @@ export default function Shell({ children }: { children: React.ReactNode }) {
         </SheetContent>
       </Sheet>
 
-      <main className="flex-1 p-4 md:p-6 overflow-auto pt-0 md:pt-6">
-        <div className="max-w-6xl mx-auto">
+      <main className="flex-1 overflow-auto">
+        <div className="container mx-auto p-4 md:p-6 max-w-6xl">
           {children}
         </div>
       </main>
