@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/lib/auth";
+import { FirebaseError } from "firebase/app";
+import { signInWithPopup } from "firebase/auth";
+import { auth, googleProvider } from "@/lib/firebase";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -30,12 +33,61 @@ export default function Login() {
           ? "You've been successfully logged in"
           : "Your account has been created and you're now logged in",
       });
-    } catch (error: any) {
+    } catch (error) {
+      const firebaseError = error as FirebaseError;
+      let errorMessage = "An error occurred during authentication";
+      
+      switch (firebaseError.code) {
+        case "auth/invalid-email":
+          errorMessage = "Please enter a valid email address";
+          break;
+        case "auth/user-not-found":
+          errorMessage = "No account found with this email";
+          break;
+        case "auth/wrong-password":
+          errorMessage = "Incorrect password";
+          break;
+        case "auth/weak-password":
+          errorMessage = "Password should be at least 6 characters";
+          break;
+        case "auth/email-already-in-use":
+          errorMessage = "An account with this email already exists";
+          break;
+        case "auth/invalid-credential":
+          errorMessage = "Invalid email or password";
+          break;
+        case "auth/too-many-requests":
+          errorMessage = "Too many attempts. Please try again later";
+          break;
+      }
+
       toast({
         title: "Authentication error",
-        description: error.message,
+        description: errorMessage,
         variant: "destructive",
       });
+      console.error("Auth error:", firebaseError);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setIsLoading(true);
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      toast({
+        title: "Welcome!",
+        description: "You've been successfully logged in with Google",
+      });
+    } catch (error) {
+      const firebaseError = error as FirebaseError;
+      toast({
+        title: "Authentication error",
+        description: "Could not sign in with Google. Please try again.",
+        variant: "destructive",
+      });
+      console.error("Google auth error:", firebaseError);
     } finally {
       setIsLoading(false);
     }
@@ -93,6 +145,23 @@ export default function Login() {
               onClick={(e) => handleSubmit(e, "signup")}
             >
               Create Account
+            </Button>
+            <div className="relative my-4">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+              </div>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              disabled={isLoading}
+              onClick={handleGoogleSignIn}
+            >
+              Sign in with Google
             </Button>
           </div>
         </form>
